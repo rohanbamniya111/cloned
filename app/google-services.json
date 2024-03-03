@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "685168936648",
+    "project_id": "fact-o-pedia-382200",
+    "storage_bucket": "fact-o-pedia-382200.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685168936648:android:9e776ccb2d90e9707747fd",
+        "android_client_info": {
+          "package_name": "com.exploratory.fact_o_pedia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "685168936648-jft2a7t3bbngqh6370nalsob5vrfq5ef.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.exploratory.fact_o_pedia",
+            "certificate_hash": "aae99781b072d0aa29536d4099086829ef0cd873"
+          }
+        },
+        {
+          "client_id": "685168936648-odg51ee5kvrss3sfinqhf1mbimp55vun.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2OfTxRaeGIfLFVRXXD-_862eMNDIj5ik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685168936648-odg51ee5kvrss3sfinqhf1mbimp55vun.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

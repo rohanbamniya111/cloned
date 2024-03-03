@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Fact-O-Pedia</string>
+    <string name="title">Fake News Fact Check</string>
+    <string name="api_key">AIzaSyBXY4UKOL6Og19dSB7R3y0rP8HVdT82k6I</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+</resources>
