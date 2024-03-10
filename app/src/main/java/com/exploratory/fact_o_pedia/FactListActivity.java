@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.auth.User;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FactListActivity extends AppCompatActivity implements SelectListener{
     public static String q;
@@ -39,7 +40,7 @@ public class FactListActivity extends AppCompatActivity implements SelectListene
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_fact_list);
-        getSupportActionBar().hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         textView = findViewById(R.id.search_query);
 
@@ -48,6 +49,7 @@ public class FactListActivity extends AppCompatActivity implements SelectListene
         dialog.show();
 
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         query = bundle.getString("query");
         item = bundle.getString("item");
 
@@ -149,7 +151,7 @@ public class FactListActivity extends AppCompatActivity implements SelectListene
             intent.putExtras(bundle);
             startActivity(intent);
         }
-        else if(currentUser.getEmail().equals("mjmanas54@gmail.com")){
+        else if(currentUser.getEmail().equals("mayureshchimankar2@gmail.com")){
             Intent intent = new Intent(FactListActivity.this,AdminActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("claim_text", claim_text);

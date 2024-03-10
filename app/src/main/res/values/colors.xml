@@ -23,4 +23,12 @@
     <color name="searchbtn">#FFFF9A14</color>
     <color name="no_result">#FFFF9248</color>
     <color name="logobg">#FF02B3C7</color>
+    <color name="lavender">#8692f7</color>
+    //onboarding colors
+    <color name="background">#F0F4F3</color>
+    <color name="buttontext">#50C2C9</color>
+
+    //indicator color
+    <color name="inactive">#C4C4C4</color>
+    <color name="active">#50C2C9</color>
 </resources>
