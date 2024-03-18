@@ -54,6 +54,7 @@ public class Updates extends AppCompatActivity{
         recyclerView.setAdapter(adapter);
         description_extract de = new description_extract();
         de.execute();
+        //new DescriptionExtractTask().execute;
     }
     private class description_extract extends AsyncTask<Void,Void,Void> {
         @Override
@@ -116,12 +117,12 @@ public class Updates extends AppCompatActivity{
                     link = "https://www.hindustantimes.com"+link;
                     Document doc1=null;
                     try{
-                        doc1 = Jsoup.connect(link).get();
+                        doc = Jsoup.connect(link).get();
 
                     } catch (IOException e){
                         e.printStackTrace();
                     }
-                    Elements images = doc1.getElementsByClass("storyParagraphFigure");
+                    Elements images = doc.getElementsByClass("storyParagraphFigure");
                     imglinks.add(images.get(0).child(1).child(0).child(0).child(1).attr("src"));
                 }
             }
@@ -156,14 +157,14 @@ public class Updates extends AppCompatActivity{
                     }
                     Document doc1=null;
                     try{
-                        doc1 = Jsoup.connect(link).get();
+                        doc3 = Jsoup.connect(link).get();
 
                     } catch (IOException e){
                         e.printStackTrace();
                     }
                     assert doc1 != null;
-                    Elements images = doc1.getElementsByClass("lead-img").prev().prev().prev();
-                    Elements times2 = doc1.getElementsByClass("publish-time");
+                    Elements images = doc3.getElementsByClass("lead-img").prev().prev().prev();
+                    Elements times2 = doc3.getElementsByClass("publish-time");
                     if(images.size()==0){
                         doc3_times.add(times2.get(0).text());
                         doc3_imglinks.add("https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg");
@@ -224,6 +225,7 @@ public class Updates extends AppCompatActivity{
                             time = doc3_times.get(i);
                             category="";
                             link = finalDoc3_headlines.get(i).child(0).attr("href");
+                            link = "https://www.thehindu.com"+link;
                             listClasses.add(new UpdatesItems(headline,image,factchecker,time,category,link));
                         }
                         if(turn==4){
@@ -233,6 +235,7 @@ public class Updates extends AppCompatActivity{
                             time = finalDoc4_headlines.get(i).nextElementSibling().nextElementSibling().text();
                             category = "";
                             link = finalDoc4_headlines.get(i).nextElementSibling().child(0).attr("href");
+                           // link = "https://indianexpress.com"+link;
                             listClasses.add(new UpdatesItems(headline,image,factchecker,time,category,link));
                         }
                     }

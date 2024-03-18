@@ -89,15 +89,16 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="20dp"
         android:text="Made with ❤ in India"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.465"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -114,6 +115,17 @@
         app:layout_constraintVertical_bias="0.5">
 
         <Button
+            android:id="@+id/uploadImageButton"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="88dp"
+            android:text="Upload Image"
+            android:onClick="uploadImage" />
+
+
+
+        <Button
             android:id="@+id/button3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -122,6 +134,7 @@
             android:layout_weight="1"
             android:onClick="thetimesofindiaFunc"
             android:text="The Times of India" />
+
 
         <Button
             android:id="@+id/update"
@@ -147,13 +160,13 @@
             android:onClick="thehinduFunc"
             android:text="The Indian Express" />
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:onClick="login"
-            android:text="Login/Register" />
+<!--        <Button-->
+<!--            android:id="@+id/login"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:minHeight="48dp"-->
+<!--            android:onClick="login"-->
+<!--            android:text="Login/Register" />-->
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
