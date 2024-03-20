@@ -13,6 +13,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.net.Uri;
+import java.io.IOException;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +36,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 101;
     private static final int REQUEST_CAMERA_PERMISSION = 102;
+    private static final int REQUEST_GALLERY_PERMISSION = 103;
+    private static final int REQUEST_IMAGE_GALLERY = 104;
+
+
 
     EditText editText;
     String item = "All Languages";
@@ -89,9 +96,59 @@ public class MainActivity extends AppCompatActivity {
 
     // Method to show options for capturing or uploading image
     private void showImageOptions() {
+        // Create a bottom sheet dialog to display options
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_image_options, null);
+        bottomSheetDialog.setContentView(bottomSheetView);
 
-        launchCameraIntent();
+        // Find views in the bottom sheet layout
+        View cameraOption = bottomSheetView.findViewById(R.id.camera_option);
+        View galleryOption = bottomSheetView.findViewById(R.id.gallery_option);
+
+        // Set click listeners for camera and gallery options
+        cameraOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+                launchCameraIntent();
+            }
+        });
+
+        galleryOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.dismiss();
+                checkGalleryPermissionAndOpen();
+            }
+        });
+
+        bottomSheetDialog.show();
     }
+
+    private void openGallery() {
+        // Implement code to open the device's gallery and handle image selection
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
+    }
+
+    private void checkGalleryPermissionAndOpen() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted, check if we should show the rationale
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user
+                Toast.makeText(this, "Gallery permission is required to select images", Toast.LENGTH_SHORT).show();
+            }
+
+            // Request the permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    REQUEST_GALLERY_PERMISSION);
+        } else {
+            // Permission has already been granted, open gallery
+            openGallery();
+        }
+    }
+
 
     // Method to launch camera intent to capture image
     private void launchCameraIntent() {
@@ -115,6 +172,14 @@ public class MainActivity extends AppCompatActivity {
                 // Permission denied
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
+        } else if (requestCode == REQUEST_GALLERY_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, open gallery
+                openGallery();
+            } else {
+                // Permission denied
+                Toast.makeText(this, "Gallery permission denied", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -124,14 +189,22 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Get the image bitmap from the camera intent
+            // Handle image capture result
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
-
-            // Process the image with OCR
             processImageWithOCR(imageBitmap);
+        } else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK && data != null) {
+            // Handle image selection from gallery
+            Uri selectedImageUri = data.getData();
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                processImageWithOCR(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
+
 
     private void processImageWithOCR(Bitmap imageBitmap) {
         // Convert Bitmap to FirebaseVisionImage
