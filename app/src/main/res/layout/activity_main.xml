@@ -175,9 +175,10 @@
 
     <ImageView
         android:id="@+id/uploadImageButton"
+
         android:layout_width="48dp"
         android:layout_height="70dp"
-        android:layout_marginStart="320dp"
+        android:layout_marginStart="352dp"
         android:layout_marginTop="212dp"
         android:onClick="uploadImage"
         android:text="Upload Image"
