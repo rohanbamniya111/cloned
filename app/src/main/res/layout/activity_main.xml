@@ -174,16 +174,16 @@
 
     <ImageView
         android:id="@+id/uploadImageButton"
-        android:layout_width="48dp"
-        android:layout_height="70dp"
+        android:layout_width="39dp"
+        android:layout_height="58dp"
         android:layout_marginTop="224dp"
         android:onClick="uploadImage"
         android:text="Upload Image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.975"
+        app:layout_constraintHorizontal_bias="0.956"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/image__1_"
+        app:srcCompat="@drawable/ic_image_upload"
         tools:ignore="MissingConstraints,NotSibling" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
