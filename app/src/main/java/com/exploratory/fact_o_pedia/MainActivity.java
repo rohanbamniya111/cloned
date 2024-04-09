@@ -15,6 +15,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.net.Uri;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Date;
+import android.os.Environment;
+
+
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -40,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 102;
     private static final int REQUEST_GALLERY_PERMISSION = 103;
     private static final int REQUEST_IMAGE_GALLERY = 104;
+
+
 
 
 
@@ -162,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     // Method to handle the result of permissions request
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -184,25 +195,75 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void startCropActivity(Uri imageUri) {
+    // Method to start crop activity for camera
+    // Method to start crop activity for camera
+    private void startCropActivityForCamera(Bitmap imageBitmap) {
+        // Create a temporary file to save the image
+        File tempFile = createTempImageFile();
+        try {
+            // Save the Bitmap to the temporary file
+            FileOutputStream out = new FileOutputStream(tempFile);
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+
+            // Get the URI of the temporary file
+            Uri tempUri = Uri.fromFile(tempFile);
+
+            // Start the crop activity for camera with the URI of the temporary file
+            CropImage.activity(tempUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setMultiTouchEnabled(true)
+                    .start(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Method to create a temporary image file
+    private File createTempImageFile() {
+        // Create a unique file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        try {
+            // Create the temporary file
+            File imageFile = File.createTempFile(
+                    imageFileName,  /* prefix */
+                    ".jpg",         /* suffix */
+                    storageDir      /* directory */
+            );
+            return imageFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Method to start crop activity for gallery
+    private void startCropActivityForGallery(Uri imageUri) {
         CropImage.activity(imageUri)
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .setMultiTouchEnabled(true)
                 .start(this);
     }
 
+    // Handling crop activity result
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            // Handle image capture result
-            Uri imageUri = data.getData();
-            startCropActivity(imageUri);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
+            // Get the captured image bitmap
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            // Start the crop activity for camera
+            startCropActivityForCamera(imageBitmap);
         } else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK && data != null) {
             // Handle image selection from gallery
             Uri imageUri = data.getData();
-            startCropActivity(imageUri);
+            // Start the crop activity for gallery
+            startCropActivityForGallery(imageUri);
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             // Handle crop result
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
@@ -220,6 +281,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
     private void processImageWithOCR(Bitmap imageBitmap) {
