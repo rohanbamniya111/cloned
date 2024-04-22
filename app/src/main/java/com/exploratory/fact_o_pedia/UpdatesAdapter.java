@@ -54,7 +54,7 @@ public class UpdatesAdapter extends RecyclerView.Adapter<UpdatesAdapter.ViewHold
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        UpdatesItems listitem = list.get(position);
+        UpdatesItems listitem = list.get(holder.getAdapterPosition());
         holder.headline.setText(listitem.getTitle());
         holder.factchecker.setText(listitem.getFactChecker());
         holder.time.setText(listitem.getTime());
@@ -64,13 +64,13 @@ public class UpdatesAdapter extends RecyclerView.Adapter<UpdatesAdapter.ViewHold
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.OnUpdateClicked(list.get(position).getLink());
+                listener.OnUpdateClicked(list.get(holder.getAdapterPosition()).getLink());
             }
         });
         holder.comment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener2.addComment(list.get(position).getTitle());
+                listener2.addComment(list.get(holder.getAdapterPosition()).getTitle());
             }
         });
 
@@ -125,4 +125,3 @@ public class UpdatesAdapter extends RecyclerView.Adapter<UpdatesAdapter.ViewHold
     // Return the size of your dataset (invoked by the layout manager)
 
 }
-

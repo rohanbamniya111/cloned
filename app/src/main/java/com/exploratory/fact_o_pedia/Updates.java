@@ -24,6 +24,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class Updates extends AppCompatActivity{
@@ -45,6 +46,7 @@ public class Updates extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_updates);
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         turn = bundle.getInt("turn");
         progressBar = findViewById(R.id.progressBar);
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
@@ -108,6 +110,7 @@ public class Updates extends AppCompatActivity{
             Elements doc3_headlines=null;
             Elements doc4_headlines=null;
             if(turn==1){
+                assert doc != null;
                 headlines = doc.getElementsByClass("hdg3");
                 iterations = headlines.size();
                 times = doc.getElementsByClass("dateTime");
@@ -127,6 +130,7 @@ public class Updates extends AppCompatActivity{
                 }
             }
             if(turn==2){
+                assert doc2 != null;
                 doc2_headlines = doc2.getElementsByClass("w_tle");
                 iterations = doc2_headlines.size();
                 for(int i=0;i<doc2_headlines.size();i++){
@@ -139,6 +143,7 @@ public class Updates extends AppCompatActivity{
                     } catch (IOException e){
                         e.printStackTrace();
                     }
+                    assert doc1 != null;
                     Elements images = doc1.getElementsByClass("wJnIp");
                     Elements times2 = doc1.getElementsByClass("xf8Pm");
 
@@ -146,36 +151,43 @@ public class Updates extends AppCompatActivity{
                     doc2_imglinks.add(images.get(0).child(0).attr("src"));
                 }
             }
-            if(turn==3){
+            if (turn == 3) {
+                assert doc3 != null;
                 doc3_headlines = doc3.getElementsByClass("title");
-                iterations = doc3_headlines.size();
-                for(int i=0;i<doc3_headlines.size();i++){
-                    String link = doc3_headlines.get(i).child(0).attr("href");
-                    if(link==""){
-                        count++;
-                        continue;
+                if (doc3_headlines.size() > 0) {
+                    iterations = doc3_headlines.size();
+                    for (int i = 0; i < iterations; i++) {
+                        String link = doc3_headlines.get(i).child(0).attr("href");
+                        if (link.equals("")) {
+                            count++;
+                            continue;
+                        }
+                        Document doc1 = null;
+                        try {
+                            doc1 = Jsoup.connect(link).get();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (doc1 != null) {
+                            Elements images = doc1.getElementsByClass("lead-img").prev().prev().prev();
+                            Elements times2 = doc1.getElementsByClass("publish-time");
+                            if (times2.size() > 0) {
+                                doc3_times.add(times2.get(0).text());
+                            }
+                            if (images.size() == 0) {
+                                doc3_imglinks.add("https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg");
+                            } else {
+                                doc3_imglinks.add(images.get(0).attr("srcset"));
+                            }
+                        }
                     }
-                    Document doc1=null;
-                    try{
-                        doc3 = Jsoup.connect(link).get();
-
-                    } catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    assert doc1 != null;
-                    Elements images = doc3.getElementsByClass("lead-img").prev().prev().prev();
-                    Elements times2 = doc3.getElementsByClass("publish-time");
-                    if(images.size()==0){
-                        doc3_times.add(times2.get(0).text());
-                        doc3_imglinks.add("https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg");
-                        continue;
-                    }
-                    doc3_times.add(times2.get(0).text());
-                    doc3_imglinks.add(images.get(0).attr("srcset"));
+                    iterations -= count;
                 }
-                iterations -=count;
             }
+
+
             if(turn==4){
+                assert doc4 != null;
                 doc4_headlines = doc4.getElementsByClass("about-thumb");
                 iterations = doc4_headlines.size();
             }
@@ -235,7 +247,7 @@ public class Updates extends AppCompatActivity{
                             time = finalDoc4_headlines.get(i).nextElementSibling().nextElementSibling().text();
                             category = "";
                             link = finalDoc4_headlines.get(i).nextElementSibling().child(0).attr("href");
-                           // link = "https://indianexpress.com"+link;
+                            // link = "https://indianexpress.com"+link;
                             listClasses.add(new UpdatesItems(headline,image,factchecker,time,category,link));
                         }
                     }
@@ -263,7 +275,7 @@ public class Updates extends AppCompatActivity{
             intent.putExtras(bundle);
             startActivity(intent);
         }
-        else if(currentUser.getEmail().equals("mjmanas54@gmail.com")){
+        else if(Objects.equals(currentUser.getEmail(), "mjmanas54@gmail.com")){
             Intent intent = new Intent(Updates.this,AdminActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("claim_text", claim_text);

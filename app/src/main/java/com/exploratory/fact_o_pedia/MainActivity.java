@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -48,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 102;
     private static final int REQUEST_GALLERY_PERMISSION = 103;
     private static final int REQUEST_IMAGE_GALLERY = 104;
-
-
-
 
 
     EditText editText;
@@ -100,7 +99,8 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.CAMERA},
                     REQUEST_CAMERA_PERMISSION);
-        } else {
+        }
+        else {
             // Permission has already been granted, show options for capturing or uploading image
             showImageOptions();
         }
@@ -131,6 +131,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 bottomSheetDialog.dismiss();
                 checkGalleryPermissionAndOpen();
+
+
             }
         });
 
@@ -143,23 +145,47 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);
     }
 
-    private void checkGalleryPermissionAndOpen() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Permission is not granted, check if we should show the rationale
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user
-                Toast.makeText(this, "Gallery permission is required to select images", Toast.LENGTH_SHORT).show();
-            }
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
 
-            // Request the permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_GALLERY_PERMISSION);
+    private void checkGalleryPermissionAndOpen() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            // For Android versions 6.0 (API level 23) to Android 12 (API level 31)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted, request the permission
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    // Show an explanation to the user
+                    Toast.makeText(this, "Gallery permission is required to select images", Toast.LENGTH_SHORT).show();
+                }
+                // Request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_GALLERY_PERMISSION);
+            } else {
+                // Permission has already been granted, open gallery
+                openGallery();
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // For Android version 13+ (API level 33 and above)
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                // Permission is not granted, request the permission
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_MEDIA_IMAGES)) {
+                    // Show an explanation to the user
+                    Toast.makeText(this, "Gallery permission is required to select images", Toast.LENGTH_SHORT).show();
+                }
+                // Request the permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_MEDIA_IMAGES},
+                        REQUEST_GALLERY_PERMISSION);
+            } else {
+                // Permission has already been granted, open gallery
+                openGallery();
+            }
         } else {
-            // Permission has already been granted, open gallery
+            // For devices with API level lower than 23, open gallery directly
             openGallery();
         }
     }
+
 
 
     // Method to launch camera intent to capture image
@@ -195,22 +221,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    // Method to start crop activity for camera
+
     // Method to start crop activity for camera
     private void startCropActivityForCamera(Bitmap imageBitmap) {
         // Create a temporary file to save the image
         File tempFile = createTempImageFile();
         try {
-            // Save the Bitmap to the temporary file
+            // Save the Bitmap to the temporary file without compression
             FileOutputStream out = new FileOutputStream(tempFile);
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, out); // Use PNG format for lossless compression
+            out.write(imageBitmap.getRowBytes());
             out.flush();
             out.close();
 
             // Get the URI of the temporary file
             Uri tempUri = Uri.fromFile(tempFile);
 
-            // Start the crop activity for camera with the URI of the temporary file
+            // Start the crop activity for the camera with the URI of the temporary file
             CropImage.activity(tempUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setMultiTouchEnabled(true)
@@ -220,25 +247,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     // Method to create a temporary image file
+
     private File createTempImageFile() {
         // Create a unique file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "PNG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         try {
-            // Create the temporary file
-            File imageFile = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
-            );
+            // Create the temporary file without compression
+            File imageFile = new File(storageDir, imageFileName + ".png");
+            imageFile.createNewFile(); // Create an empty file
             return imageFile;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
+
 
     // Method to start crop activity for gallery
     private void startCropActivityForGallery(Uri imageUri) {
@@ -256,8 +283,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && data != null) {
             // Get the captured image bitmap
             Bundle extras = data.getExtras();
+            assert extras != null;
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             // Start the crop activity for camera
+            assert imageBitmap != null;
             startCropActivityForCamera(imageBitmap);
         } else if (requestCode == REQUEST_IMAGE_GALLERY && resultCode == RESULT_OK && data != null) {
             // Handle image selection from gallery

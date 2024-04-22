@@ -1,15 +1,15 @@
 package com.exploratory.fact_o_pedia;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+//import androidx.appcompat.app.AppCompatDelegate;
 
-import android.app.ProgressDialog;
+//import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.exploratory.fact_o_pedia.Models.Claims;
+//import com.exploratory.fact_o_pedia.Models.Claims;
 
 public class UpdateDetailsActivity extends AppCompatActivity {
     WebView webView;
