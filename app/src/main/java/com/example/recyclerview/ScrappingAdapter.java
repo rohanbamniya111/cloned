@@ -9,8 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.exploratory.fact_o_pedia.R;
-import com.exploratory.fact_o_pedia.Updates;
+import com.explo.fact_o_pedia.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

@@ -134,19 +134,19 @@
             android:onClick="hidustantimesFunc"
             android:text="Hindustan Times" />
 
-        <Button
-            android:id="@+id/button8"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="theindianexpressFunc"
-            android:text="The Hindu" />
+<!--        <Button-->
+<!--            android:id="@+id/button8"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:onClick="theindianexpressFunc"-->
+<!--            android:text="The Hindu" />-->
 
-        <Button
-            android:id="@+id/button9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="thehinduFunc"
-            android:text="The Indian Express" />
+<!--        <Button-->
+<!--            android:id="@+id/button9"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:onClick="thehinduFunc"-->
+<!--            android:text="The Indian Express" />-->
 
     </LinearLayout>
 
