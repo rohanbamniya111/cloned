@@ -68,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish(); // Finish MainActivity to prevent going back
         } else {
+
+            // Show the instruction dialog
+            InstructionDialogFragment dialogFragment = new InstructionDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "InstructionDialogFragment");
             // Proceed to the main activity layout
             setContentView(R.layout.activity_main);
 
